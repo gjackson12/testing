@@ -1,0 +1,28 @@
+# docker-compose build && docker-compose up -d
+# If "docker-compose logs ckan" shows DB not ready, run "docker-compose restart ckan" a few times.
+version: "2"
+
+services:
+  gjackson-ckan:
+    container_name: gjackson-ckan
+    image: gjackson12/gjackson-ckan:version3
+    depends_on:
+      - gjackson-ckan-postgres
+      - gjackson-ckan-solr
+    links:
+      - gjackson-ckan-postgres
+      - gjackson-ckan-solr
+    ports:
+      - "0.0.0.0:5000:5000"
+
+  gjackson-ckan-postgres:
+    container_name: gjackson-ckan-postgres
+    image: gjackson12/gjackson-ckan-postgres:version1
+    ports:
+      - "0.0.0.0:5432:5432"
+
+  gjackson-ckan-solr:
+    container_name: gjackson-ckan-solr
+    image: gjackson12/gjackson-ckan-solr:version3
+    ports:
+      - "0.0.0.0:8983:8983"
