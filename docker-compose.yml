@@ -5,13 +5,16 @@ version: "2"
 services:
   gjackson-ckan:
     container_name: gjackson-ckan
-    image: gjackson12/gjackson-ckan:version3
+    image: gjackson12/gjackson-ckan:version4
     depends_on:
       - gjackson-ckan-postgres
       - gjackson-ckan-solr
+      - gjackson-ckan-datapusher
     links:
       - gjackson-ckan-postgres
       - gjackson-ckan-solr
+      - gjackson-ckan-wordpress
+      - gjackson-ckan-datapusher
     ports:
       - "0.0.0.0:5000:5000"
 
@@ -26,3 +29,25 @@ services:
     image: gjackson12/gjackson-ckan-solr:version3
     ports:
       - "0.0.0.0:8983:8983"
+
+  gjackson-ckan-wordpress:
+    container_name: gjackson-ckan-wordpress
+    image: wordpress
+    links:
+      - gjackson-ckan-mysql:mysql
+    ports:
+      - "0.0.0.0:8080:80"
+    environment:
+      WORDPRESS_DB_PASSWORD: example
+
+  gjackson-ckan-mysql:
+    container_name: gjackson-ckan-mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+  gjackson-ckan-datapusher:
+    container_name: gjackson-ckan-datapusher
+    image: gjackson12/gjackson-ckan-datapusher:version3
+    ports:
+      - "0.0.0.0:8800:8800"
