@@ -9,12 +9,10 @@ services:
     depends_on:
       - gjackson-ckan-postgres
       - gjackson-ckan-solr
-      - gjackson-ckan-datapusher
     links:
       - gjackson-ckan-postgres
       - gjackson-ckan-solr
-      - gjackson-ckan-wordpress
-      - gjackson-ckan-datapusher
+      - gjackson-ckan-redis
     ports:
       - "0.0.0.0:5000:5000"
 
@@ -35,6 +33,7 @@ services:
     image: wordpress
     links:
       - gjackson-ckan-mysql:mysql
+      - gjackson-ckan
     ports:
       - "0.0.0.0:8080:80"
     environment:
@@ -46,8 +45,17 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
 
-  gjackson-ckan-datapusher:
-    container_name: gjackson-ckan-datapusher
-    image: gjackson12/gjackson-ckan-datapusher:version3
+  gjackson-ckan-redis:
+    container_name: gjackson-ckan-redis
+    image: redis
     ports:
-      - "0.0.0.0:8800:8800"
+      - "0.0.0.0:6379:6379"
+
+  gjackson-ckan-activiti:
+    container_name: gjackson-ckan-activiti
+    image: eternnoir/activiti:latest
+    links:
+      - gjackson-ckan
+      - gjackson-ckan-wordpress
+    ports:
+      - "0.0.0.0:8081:8080"
